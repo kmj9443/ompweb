@@ -1407,5 +1407,8 @@
   "usageConfig.emptyTitle": "No usage records found",
   "usageConfig.emptyDesc": "Start chatting with models to see your token analytics and costs here.",
   "usageConfig.loading": "Loading usage analytics…",
-  "usageConfig.error": "Could not load usage data"
+  "usageConfig.error": "Could not load usage data",
+  "providerUsage.window5h": "5H",
+  "providerUsage.window7d": "7D",
+  "providerUsage.window30d": "30D"
 }
