@@ -1378,5 +1378,8 @@
   "usageConfig.emptyTitle": "暂无用量记录",
   "usageConfig.emptyDesc": "开始与模型对话后，将在此处显示 Token 用量和费用分析。",
   "usageConfig.loading": "正在加载用量分析…",
-  "usageConfig.error": "加载用量数据失败"
+  "usageConfig.error": "加载用量数据失败",
+  "providerUsage.window5h": "5H",
+  "providerUsage.window7d": "7D",
+  "providerUsage.window30d": "30D"
 }
