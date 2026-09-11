@@ -184,7 +184,7 @@
   "appShell.providerUsageNoData": "보고된 제공자 한도가 없습니다",
   "appShell.account": "계정 {number}",
   "providerUsage.highest": "최고 {percent}% · {window}",
-  "providerUsage.resets": "{value}에 초기화",
+  "providerUsage.resets": "{value} 후 초기화",
   "appShell.providerUsageButton": "제공자 사용량 한도",
   "composerContext.title": "컨텍스트",
   "composerContext.windowSize": "{tokens} 윈도우",
@@ -1400,5 +1400,8 @@
   "usageConfig.emptyTitle": "사용량 기록이 없습니다",
   "usageConfig.emptyDesc": "모델과 대화를 시작하면 여기에서 토큰 분석과 비용을 확인할 수 있습니다.",
   "usageConfig.loading": "사용량 분석 불러오는 중…",
-  "usageConfig.error": "사용량 데이터를 불러오지 못했습니다"
+  "usageConfig.error": "사용량 데이터를 불러오지 못했습니다",
+  "providerUsage.window5h": "5시간",
+  "providerUsage.window7d": "1주",
+  "providerUsage.window30d": "30일"
 }
