@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
 import type { ProviderUsageReport, ProviderUsageSnapshot } from "@/lib/provider-usage-types";
 
-export function formatUsageReset(value: number, unit: "minutes" | "hours"): string {
+export function formatUsageReset(value: number, unit: "minutes" | "hours", locale = "en"): string {
+  const ko = locale === "ko";
   if (unit === "minutes") {
-    if (value < 60) return `${value}m`;
+    if (value < 60) return ko ? `${value}분` : `${value}m`;
     const hours = Math.floor(value / 60);
     const minutes = value % 60;
+    if (ko) return minutes > 0 ? `${hours}시간 ${minutes}분` : `${hours}시간`;
     return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
   }
-  if (value < 24) return `${value}h`;
+  if (value < 24) return ko ? `${value}시간` : `${value}h`;
   const days = Math.floor(value / 24);
   const hours = value % 24;
+  if (ko) return hours > 0 ? `${days}일 ${hours}시간` : `${days}일`;
   return hours > 0 ? `${days}d ${hours}h` : `${days}d`;
 }
 
