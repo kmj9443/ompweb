@@ -20,12 +20,12 @@ const WINDOWS: WindowDef[] = [
 
 const COLLAPSED_STORAGE_KEY = "omp-web:provider-usage-collapsed";
 
-function worstWindow(report: ProviderUsageReport): { short: string; window: ProviderUsageWindow } | null {
-  let best: { short: string; window: ProviderUsageWindow } | null = null;
+function worstWindow(report: ProviderUsageReport): { short: string; labelKey: string; window: ProviderUsageWindow } | null {
+  let best: { short: string; labelKey: string; window: ProviderUsageWindow } | null = null;
   for (const def of WINDOWS) {
     const window = def.pick(report);
     if (window && (best === null || window.percent > best.window.percent)) {
-      best = { short: def.short, window };
+      best = { short: def.short, labelKey: def.labelKey, window };
     }
   }
   return best;
