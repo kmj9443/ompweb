@@ -8,13 +8,14 @@ import type { ProviderUsageReport, ProviderUsageWindow } from "@/lib/provider-us
 
 interface WindowDef {
   short: string;
+  labelKey: string;
   pick: (report: ProviderUsageReport) => ProviderUsageWindow | undefined;
 }
 
 const WINDOWS: WindowDef[] = [
-  { short: "5H", pick: (r) => r.fiveHour },
-  { short: "7D", pick: (r) => r.sevenDay },
-  { short: "30D", pick: (r) => r.monthly },
+  { short: "5H", labelKey: "providerUsage.window5h", pick: (r) => r.fiveHour },
+  { short: "7D", labelKey: "providerUsage.window7d", pick: (r) => r.sevenDay },
+  { short: "30D", labelKey: "providerUsage.window30d", pick: (r) => r.monthly },
 ];
 
 const COLLAPSED_STORAGE_KEY = "omp-web:provider-usage-collapsed";
@@ -30,20 +31,21 @@ function worstWindow(report: ProviderUsageReport): { short: string; window: Prov
   return best;
 }
 
-function DetailMeter({ short, window, t }: {
+function DetailMeter({ short, window, locale, t }: {
   short: string;
   window: ProviderUsageWindow;
+  locale: string;
   t: (key: string, vars?: Record<string, string | number>) => string;
 }) {
   const pct = Math.round(window.percent);
   const tone = usageTone(pct);
   const rawReset = window.resetMinutes ?? window.resetHours;
   const reset = rawReset !== undefined
-    ? formatUsageReset(rawReset, window.resetMinutes !== undefined ? "minutes" : "hours")
+    ? formatUsageReset(rawReset, window.resetMinutes !== undefined ? "minutes" : "hours", locale)
     : null;
   return (
     <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-      <span style={{ fontSize: 9, fontWeight: 700, color: "var(--text-dim)", letterSpacing: "0.04em", width: 22, flexShrink: 0 }}>{short}</span>
+      <span style={{ fontSize: 9, fontWeight: 700, color: "var(--text-dim)", letterSpacing: "0.04em", width: 36, flexShrink: 0 }}>{short}</span>
       <span style={{ flex: 1, minWidth: 0, height: 3, borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
         <span style={{ display: "block", height: "100%", width: `${Math.min(100, Math.max(0, pct))}%`, background: tone, borderRadius: 2 }} />
       </span>
@@ -62,7 +64,7 @@ function DetailMeter({ short, window, t }: {
 // Compact provider rate-limit block pinned above Settings in the sidebar: one
 // slim row per account (worst window only), click to expand the full detail.
 export function ProviderUsageBar() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { snapshot, loading, error } = useProviderUsage("", 5 * 60_000);
   const reports = snapshot?.reports ?? [];
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
@@ -82,7 +84,7 @@ export function ProviderUsageBar() {
   for (const report of reports) {
     const best = worstWindow(report);
     if (best && (worst === null || best.window.percent > worst.percent)) {
-      worst = { percent: Math.round(best.window.percent), window: best.short };
+      worst = { percent: Math.round(best.window.percent), window: t(best.labelKey) };
     }
   }
 
@@ -220,7 +222,7 @@ export function ProviderUsageBar() {
               <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "6px 8px 7px 23px", fontFamily: "var(--font-ui)" }}>
                 {WINDOWS.map((def) => {
                   const window = def.pick(report);
-                  return window ? <DetailMeter key={def.short} short={def.short} window={window} t={t} /> : null;
+                  return window ? <DetailMeter key={def.short} short={t(def.labelKey)} window={window} locale={locale} t={t} /> : null;
                 })}
               </div>
             )}
