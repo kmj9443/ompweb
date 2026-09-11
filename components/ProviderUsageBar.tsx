@@ -146,7 +146,7 @@ export function ProviderUsageBar() {
         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {t("appShell.sectionProviderUsage")}
         </span>
-        <span style={{ marginLeft: "auto", fontSize: 10, fontFamily: "var(--font-mono)", color: worst ? usageTone(worst.percent) : "var(--text-dim)", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
+        <span style={{ marginLeft: "auto", fontSize: 10, fontFamily: "var(--font-ui)", color: worst ? usageTone(worst.percent) : "var(--text-dim)", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
           {loading && reports.length === 0
             ? t("appShell.providerUsageLoading")
             : error
@@ -197,7 +197,7 @@ export function ProviderUsageBar() {
                   }}
                 />
               )}
-              <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 10, color: "var(--text)", background: "var(--bg)", border: "1px solid var(--border)", padding: "0 5px", borderRadius: 4, whiteSpace: "nowrap", flexShrink: 0, lineHeight: 1.7 }}>
+              <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 10, color: "var(--text)", background: "var(--bg)", border: "1px solid var(--border)", padding: "0 5px", borderRadius: 4, whiteSpace: "nowrap", flexShrink: 0, lineHeight: 1.7 }}>
                 {report.provider}
               </span>
               <span style={{ fontSize: 11, color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, minWidth: 0 }}>
@@ -206,7 +206,7 @@ export function ProviderUsageBar() {
               {report.noLimits ? (
                 <span style={{ fontSize: 10, color: "var(--text-dim)", flexShrink: 0 }}>∞</span>
               ) : (
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
+                <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
                   {pct}%
                 </span>
               )}
@@ -217,7 +217,7 @@ export function ProviderUsageBar() {
               </div>
             )}
             {expanded && !report.noLimits && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "6px 8px 7px 23px", fontFamily: "var(--font-mono)" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "6px 8px 7px 23px", fontFamily: "var(--font-ui)" }}>
                 {WINDOWS.map((def) => {
                   const window = def.pick(report);
                   return window ? <DetailMeter key={def.short} short={def.short} window={window} t={t} /> : null;
