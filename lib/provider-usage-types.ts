@@ -6,6 +6,17 @@ export interface ProviderUsageWindow {
   resetHours?: number;
 }
 
+export interface ProviderUsageResetCreditDetail {
+  grantedAt?: string;
+  expiresAt?: string;
+  status?: string;
+}
+
+export interface ProviderUsageResetCredits {
+  availableCount: number;
+  credits?: ProviderUsageResetCreditDetail[];
+}
+
 export interface ProviderUsageReport {
   provider: string;
   accountLabel?: string;
@@ -17,6 +28,9 @@ export interface ProviderUsageReport {
   fiveHour?: ProviderUsageWindow;
   sevenDay?: ProviderUsageWindow;
   monthly?: ProviderUsageWindow;
+  resetCredits?: ProviderUsageResetCredits;
+  /** Opaque, short-lived server token used to redeem one saved reset for this account. */
+  resetTargetId?: string;
 }
 
 export interface ProviderUsageSnapshot {
