@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { ProviderUsageReport, ProviderUsageSnapshot } from "@/lib/provider-usage-types";
 
 export function formatUsageReset(value: number, unit: "minutes" | "hours", locale = "en"): string {
@@ -48,21 +48,28 @@ export function formatProviderUsageReport(report: ProviderUsageReport, noLimitsL
   return parts.join(" · ");
 }
 
-export type ProviderUsageState = {
+type ProviderUsageDataState = {
   snapshot: ProviderUsageSnapshot | null;
   loading: boolean;
   error: boolean;
 };
 
+export type ProviderUsageState = ProviderUsageDataState & {
+  refresh: () => void;
+};
+
 export function useProviderUsage(query: string | null, refreshMs?: number): ProviderUsageState {
-  const [state, setState] = useState<ProviderUsageState>({ snapshot: null, loading: false, error: false });
+  const [state, setState] = useState<ProviderUsageDataState>({ snapshot: null, loading: false, error: false });
+  const [refreshKey, setRefreshKey] = useState(0);
+  const refresh = useCallback(() => setRefreshKey((value) => value + 1), []);
+
   useEffect(() => {
     if (query === null) {
       setState({ snapshot: null, loading: false, error: false });
       return;
     }
     const controller = new AbortController();
-    setState({ snapshot: null, loading: true, error: false });
+    setState((previous) => ({ snapshot: previous.snapshot, loading: true, error: false }));
     const load = async () => {
       try {
         const response = await fetch(`/api/provider-usage${query ? `?${query}` : ""}`, { signal: controller.signal });
@@ -79,6 +86,7 @@ export function useProviderUsage(query: string | null, refreshMs?: number): Prov
       controller.abort();
       if (interval !== undefined) window.clearInterval(interval);
     };
-  }, [query, refreshMs]);
-  return state;
+  }, [query, refreshMs, refreshKey]);
+
+  return { ...state, refresh };
 }
