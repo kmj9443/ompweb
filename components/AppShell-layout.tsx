@@ -11,9 +11,10 @@ export function projectLabel(projectPath: string): string {
 // Resizable desktop sidebar: the width is stored on the container as the
 // --sidebar-width CSS variable (globals.css) and persisted between sessions.
 export const SIDEBAR_WIDTH_STORAGE_KEY = "omp-web:sidebar-width";
-export const SIDEBAR_MIN_WIDTH = 300;
+export const SIDEBAR_MIN_WIDTH = 200;
 export const SIDEBAR_MAX_WIDTH = 520;
-export const SIDEBAR_DEFAULT_WIDTH = 300;
+export const SIDEBAR_DEFAULT_WIDTH = 200;
+const SIDEBAR_PREVIOUS_DEFAULT_WIDTH = 300;
 
 export function clampSidebarWidth(width: number): number {
   return Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, Math.round(width)));
@@ -24,7 +25,17 @@ export function loadSidebarWidth(): number {
   try {
     const raw = window.localStorage.getItem(SIDEBAR_WIDTH_STORAGE_KEY);
     const width = raw ? Number(raw) : NaN;
-    return Number.isFinite(width) ? clampSidebarWidth(width) : SIDEBAR_DEFAULT_WIDTH;
+    if (!Number.isFinite(width)) return SIDEBAR_DEFAULT_WIDTH;
+
+    // The custom build previously forced both the minimum and default to 300px.
+    // Treat that persisted old default as the new 200px default, while keeping
+    // genuinely user-resized widths above 300px unchanged.
+    if (width === SIDEBAR_PREVIOUS_DEFAULT_WIDTH) {
+      window.localStorage.setItem(SIDEBAR_WIDTH_STORAGE_KEY, String(SIDEBAR_DEFAULT_WIDTH));
+      return SIDEBAR_DEFAULT_WIDTH;
+    }
+
+    return clampSidebarWidth(width);
   } catch {
     return SIDEBAR_DEFAULT_WIDTH;
   }
