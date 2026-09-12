@@ -3314,12 +3314,12 @@ html.dark .dropdown-surface :is(select, option) {
   .sidebar-container {
     position: relative;
     overflow: hidden;
-    --sidebar-width: 260px;
+    --sidebar-width: 300px;
     transition: width var(--dur-med) var(--ease-out-warm), min-width var(--dur-med) var(--ease-out-warm);
   }
   .sidebar-container.sidebar-open {
-    width: var(--sidebar-width, 260px);
-    min-width: var(--sidebar-width, 260px);
+    width: var(--sidebar-width, 300px);
+    min-width: var(--sidebar-width, 300px);
   }
   .sidebar-container.sidebar-closed {
     width: 0;
@@ -3328,8 +3328,8 @@ html.dark .dropdown-surface :is(select, option) {
   }
   /* keep inner content at fixed width so it doesn't reflow during animation */
   .sidebar-container > * {
-    width: var(--sidebar-width, 260px);
-    min-width: var(--sidebar-width, 260px);
+    width: var(--sidebar-width, 300px);
+    min-width: var(--sidebar-width, 300px);
   }
   /* no easing while the user drags the resize handle */
   .sidebar-container.sidebar-resizing {
