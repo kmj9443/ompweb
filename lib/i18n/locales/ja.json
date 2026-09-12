@@ -1382,5 +1382,18 @@
   "usageConfig.error": "利用状況データを読み込めませんでした",
   "providerUsage.window5h": "5H",
   "providerUsage.window7d": "7D",
-  "providerUsage.window30d": "30D"
+  "providerUsage.window30d": "30D",
+  "providerUsage.resetCredits": "リセット券 {count}枚",
+  "providerUsage.resetCreditExpires": "{date} に期限切れ",
+  "providerUsage.resetUse": "使用",
+  "providerUsage.resetConfirm": "もう一度クリック",
+  "providerUsage.resetUsing": "使用中…",
+  "providerUsage.resetUseHint": "このアカウントの保存済みリセット券を1枚使用します",
+  "providerUsage.resetConfirmHint": "リセット券を1枚使用するにはもう一度クリックしてください",
+  "providerUsage.resetApplied": "リセットを適用しました。アカウントの制限ウィンドウが更新されました。",
+  "providerUsage.resetNothingToReset": "現在リセットするものがありません。リセット券は消費されていません。",
+  "providerUsage.resetNoCredit": "このアカウントで使用できるリセット券はありません。",
+  "providerUsage.resetTargetExpired": "アカウント情報が変更されたため使用量を再読み込みしました。もう一度お試しください。",
+  "providerUsage.resetInProgress": "このアカウントではすでにリセット処理が進行中です。",
+  "providerUsage.resetFailed": "リセット結果を確認できませんでした。使用量を再読み込みしました。"
 }
