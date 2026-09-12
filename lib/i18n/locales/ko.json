@@ -1404,5 +1404,18 @@
   "usageConfig.error": "사용량 데이터를 불러오지 못했습니다",
   "providerUsage.window5h": "5시간",
   "providerUsage.window7d": "1주",
-  "providerUsage.window30d": "30일"
+  "providerUsage.window30d": "30일",
+  "providerUsage.resetCredits": "초기화권 {count}장",
+  "providerUsage.resetCreditExpires": "{date} 만료",
+  "providerUsage.resetUse": "사용",
+  "providerUsage.resetConfirm": "한 번 더 클릭",
+  "providerUsage.resetUsing": "사용 중…",
+  "providerUsage.resetUseHint": "이 계정의 초기화권 1장을 사용합니다",
+  "providerUsage.resetConfirmHint": "초기화권 1장을 사용하려면 한 번 더 클릭하세요",
+  "providerUsage.resetApplied": "초기화가 적용되었습니다. 계정 한도 창이 새로 갱신되었습니다.",
+  "providerUsage.resetNothingToReset": "현재 초기화할 한도가 없습니다. 초기화권은 사용되지 않았습니다.",
+  "providerUsage.resetNoCredit": "이 계정에 사용할 수 있는 초기화권이 없습니다.",
+  "providerUsage.resetTargetExpired": "계정 정보가 변경되어 사용량을 새로 불러왔습니다. 다시 시도하세요.",
+  "providerUsage.resetInProgress": "이 계정의 초기화 작업이 이미 진행 중입니다.",
+  "providerUsage.resetFailed": "초기화 결과를 확인하지 못했습니다. 사용량을 새로 불러왔습니다."
 }
