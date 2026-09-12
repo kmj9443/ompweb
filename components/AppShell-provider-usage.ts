@@ -69,7 +69,7 @@ export function useProviderUsage(query: string | null, refreshMs?: number): Prov
       return;
     }
     const controller = new AbortController();
-    setState((previous) => ({ snapshot: previous.snapshot, loading: true, error: false }));
+    setState({ snapshot: null, loading: true, error: false });
     const load = async () => {
       try {
         const response = await fetch(`/api/provider-usage${query ? `?${query}` : ""}`, { signal: controller.signal });
