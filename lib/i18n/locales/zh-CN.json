@@ -1382,5 +1382,18 @@
   "usageConfig.error": "加载用量数据失败",
   "providerUsage.window5h": "5H",
   "providerUsage.window7d": "7D",
-  "providerUsage.window30d": "30D"
+  "providerUsage.window30d": "30D",
+  "providerUsage.resetCredits": "重置券 {count} 张",
+  "providerUsage.resetCreditExpires": "{date} 到期",
+  "providerUsage.resetUse": "使用",
+  "providerUsage.resetConfirm": "再次点击",
+  "providerUsage.resetUsing": "使用中…",
+  "providerUsage.resetUseHint": "为此账户使用 1 张已保存的重置券",
+  "providerUsage.resetConfirmHint": "再次点击以使用 1 张重置券",
+  "providerUsage.resetApplied": "已应用重置。账户限额窗口已刷新。",
+  "providerUsage.resetNothingToReset": "当前没有需要重置的限额。未消耗重置券。",
+  "providerUsage.resetNoCredit": "此账户没有可用的重置券。",
+  "providerUsage.resetTargetExpired": "账户信息已变化，已刷新用量数据。请重试。",
+  "providerUsage.resetInProgress": "此账户的重置操作已在进行中。",
+  "providerUsage.resetFailed": "无法确认重置结果。已刷新用量数据。"
 }
