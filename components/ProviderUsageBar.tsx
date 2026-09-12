@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { ChevronRight, Gauge } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { formatUsageReset, usageTone, useProviderUsage } from "./AppShell-provider-usage";
@@ -18,7 +17,6 @@ const WINDOWS: WindowDef[] = [
   { short: "30D", labelKey: "providerUsage.window30d", pick: (r) => r.monthly },
 ];
 
-const COLLAPSED_STORAGE_KEY = "omp-web:provider-usage-collapsed";
 
 function worstWindow(report: ProviderUsageReport): { short: string; labelKey: string; window: ProviderUsageWindow } | null {
   let best: { short: string; labelKey: string; window: ProviderUsageWindow } | null = null;
@@ -61,24 +59,12 @@ function DetailMeter({ short, window, locale, t }: {
   );
 }
 
-// Compact provider rate-limit block pinned above Settings in the sidebar: one
-// slim row per account (worst window only), click to expand the full detail.
+// Provider rate-limit block pinned above Settings in the sidebar.
+// Keep the section and every account detail permanently expanded for at-a-glance monitoring.
 export function ProviderUsageBar() {
   const { t, locale } = useI18n();
   const { snapshot, loading, error } = useProviderUsage("", 5 * 60_000);
   const reports = snapshot?.reports ?? [];
-  const [expandedKey, setExpandedKey] = useState<string | null>(null);
-  // The first render must match the server, where localStorage is unavailable,
-  // so start collapsed and apply the stored preference after mounting.
-  const [collapsed, setCollapsed] = useState(true);
-  useEffect(() => {
-    try {
-      // No stored choice yet → stay hidden; an explicit expand persists.
-      if (window.localStorage.getItem(COLLAPSED_STORAGE_KEY) === "false") setCollapsed(false);
-    } catch {
-      // Storage unavailable: keep the collapsed default.
-    }
-  }, []);
 
   let worst: { percent: number; window: string } | null = null;
   for (const report of reports) {
@@ -100,22 +86,11 @@ export function ProviderUsageBar() {
         background: "var(--bg-panel)",
         flexShrink: 0,
         minHeight: 0,
-        maxHeight: "32vh",
+        maxHeight: "50vh",
         overflowY: "auto",
       }}
     >
-      <button
-        type="button"
-        onClick={() => setCollapsed((v) => {
-          const next = !v;
-          try {
-            window.localStorage.setItem(COLLAPSED_STORAGE_KEY, String(next));
-          } catch {
-            // The preference still applies for this page load.
-          }
-          return next;
-        })}
-        aria-expanded={!collapsed}
+      <div
         title={t("appShell.sectionProviderUsage")}
         style={{
           display: "flex",
@@ -125,9 +100,6 @@ export function ProviderUsageBar() {
           boxSizing: "border-box",
           padding: "0 4px",
           minWidth: 0,
-          background: "none",
-          border: "none",
-          cursor: "pointer",
           textAlign: "left",
         }}
       >
@@ -138,8 +110,7 @@ export function ProviderUsageBar() {
           style={{
             flexShrink: 0,
             color: "var(--text-dim)",
-            transform: collapsed ? "none" : "rotate(90deg)",
-            transition: "transform var(--dur-med) var(--ease-out-warm)",
+            transform: "rotate(90deg)",
           }}
         />
         <span aria-hidden="true" style={{ display: "flex", color: "var(--accent)", flexShrink: 0 }}>
@@ -157,20 +128,16 @@ export function ProviderUsageBar() {
                 ? t("providerUsage.highest", { percent: worst.percent, window: worst.window })
                 : t("appShell.providerUsageNoData")}
         </span>
-      </button>
-      {!collapsed && reports.map((report, index) => {
+      </div>
+      {reports.map((report, index) => {
         const account = report.accountLabel ?? t("appShell.account", { number: report.accountIndex ?? index + 1 });
         const key = `${report.provider}:${account}:${report.modelId ?? "all"}:${index}`;
         const best = worstWindow(report);
-        const expanded = expandedKey === key;
         const pct = best ? Math.round(best.window.percent) : 0;
         const tone = usageTone(pct);
         return (
-          <div key={key} style={{ borderRadius: "var(--radius-control)", background: expanded ? "var(--bg-subtle)" : "transparent" }}>
-            <button
-              type="button"
-              onClick={() => setExpandedKey((prev) => (prev === key ? null : key))}
-              aria-expanded={report.noLimits ? undefined : expanded}
+          <div key={key} style={{ borderRadius: "var(--radius-control)", background: "var(--bg-subtle)" }}>
+            <div
               title={account}
               style={{
                 display: "flex",
@@ -179,9 +146,6 @@ export function ProviderUsageBar() {
                 width: "100%",
                 boxSizing: "border-box",
                 padding: "5px 6px 4px",
-                background: "none",
-                border: "none",
-                cursor: report.noLimits ? "default" : "pointer",
                 textAlign: "left",
                 minWidth: 0,
               }}
@@ -194,8 +158,7 @@ export function ProviderUsageBar() {
                   style={{
                     flexShrink: 0,
                     color: "var(--text-dim)",
-                    transform: expanded ? "rotate(90deg)" : "none",
-                    transition: "transform var(--dur-med) var(--ease-out-warm)",
+                    transform: "rotate(90deg)",
                   }}
                 />
               )}
@@ -212,13 +175,13 @@ export function ProviderUsageBar() {
                   {pct}%
                 </span>
               )}
-            </button>
+            </div>
             {!report.noLimits && (
               <div style={{ height: 3, margin: "0 6px 0 23px", borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${Math.min(100, Math.max(0, pct))}%`, background: tone, borderRadius: 2 }} />
               </div>
             )}
-            {expanded && !report.noLimits && (
+            {!report.noLimits && (
               <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "6px 8px 7px 23px", fontFamily: "var(--font-ui)" }}>
                 {WINDOWS.map((def) => {
                   const window = def.pick(report);
