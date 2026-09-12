@@ -35,8 +35,9 @@ function DetailMeter({ short, window, locale, t }: {
   locale: string;
   t: (key: string, vars?: Record<string, string | number>) => string;
 }) {
-  const pct = Math.round(window.percent);
-  const tone = usageTone(pct);
+  const usedPct = Math.round(window.percent);
+  const remainingPct = Math.max(0, Math.min(100, 100 - usedPct));
+  const tone = usageTone(usedPct);
   const rawReset = window.resetMinutes ?? window.resetHours;
   const reset = rawReset !== undefined
     ? formatUsageReset(rawReset, window.resetMinutes !== undefined ? "minutes" : "hours", locale)
@@ -45,10 +46,10 @@ function DetailMeter({ short, window, locale, t }: {
     <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
       <span style={{ fontSize: 9, fontWeight: 700, color: "var(--text-dim)", letterSpacing: "0.04em", width: 36, flexShrink: 0 }}>{short}</span>
       <span style={{ flex: 1, minWidth: 0, height: 3, borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
-        <span style={{ display: "block", height: "100%", width: `${Math.min(100, Math.max(0, pct))}%`, background: tone, borderRadius: 2 }} />
+        <span style={{ display: "block", height: "100%", width: `${remainingPct}%`, background: tone, borderRadius: 2 }} />
       </span>
       <span style={{ fontSize: 10, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
-        {pct}%
+        {remainingPct}%
       </span>
       {reset && (
         <span style={{ fontSize: 9, color: "var(--text-dim)", whiteSpace: "nowrap", flexShrink: 0 }}>
@@ -66,11 +67,16 @@ export function ProviderUsageBar() {
   const { snapshot, loading, error } = useProviderUsage("", 5 * 60_000);
   const reports = snapshot?.reports ?? [];
 
-  let worst: { percent: number; window: string } | null = null;
+  let worst: { usedPercent: number; remainingPercent: number; window: string } | null = null;
   for (const report of reports) {
     const best = worstWindow(report);
-    if (best && (worst === null || best.window.percent > worst.percent)) {
-      worst = { percent: Math.round(best.window.percent), window: t(best.labelKey) };
+    if (best && (worst === null || best.window.percent > worst.usedPercent)) {
+      const usedPercent = Math.round(best.window.percent);
+      worst = {
+        usedPercent,
+        remainingPercent: Math.max(0, Math.min(100, 100 - usedPercent)),
+        window: t(best.labelKey),
+      };
     }
   }
 
@@ -109,13 +115,13 @@ export function ProviderUsageBar() {
         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {t("appShell.sectionProviderUsage")}
         </span>
-        <span style={{ marginLeft: "auto", fontSize: 10, fontFamily: "var(--font-ui)", color: worst ? usageTone(worst.percent) : "var(--text-dim)", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
+        <span style={{ marginLeft: "auto", fontSize: 10, fontFamily: "var(--font-ui)", color: worst ? usageTone(worst.usedPercent) : "var(--text-dim)", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
           {loading && reports.length === 0
             ? t("appShell.providerUsageLoading")
             : error
               ? t("appShell.providerUsageUnavailable")
               : worst
-                ? t("providerUsage.highest", { percent: worst.percent, window: worst.window })
+                ? t("providerUsage.remaining", { percent: worst.remainingPercent, window: worst.window })
                 : t("appShell.providerUsageNoData")}
         </span>
       </div>
@@ -123,8 +129,9 @@ export function ProviderUsageBar() {
         const account = report.accountLabel ?? t("appShell.account", { number: report.accountIndex ?? index + 1 });
         const key = `${report.provider}:${account}:${report.modelId ?? "all"}:${index}`;
         const best = worstWindow(report);
-        const pct = best ? Math.round(best.window.percent) : 0;
-        const tone = usageTone(pct);
+        const usedPct = best ? Math.round(best.window.percent) : 0;
+        const remainingPct = Math.max(0, Math.min(100, 100 - usedPct));
+        const tone = usageTone(usedPct);
         return (
           <div key={key}>
             <div
@@ -150,13 +157,13 @@ export function ProviderUsageBar() {
                 <span style={{ fontSize: 10, color: "var(--text-dim)", flexShrink: 0 }}>∞</span>
               ) : (
                 <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
-                  {pct}%
+                  {remainingPct}%
                 </span>
               )}
             </div>
             {!report.noLimits && (
               <div style={{ height: 3, margin: "0 6px", borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${Math.min(100, Math.max(0, pct))}%`, background: tone, borderRadius: 2 }} />
+                <div style={{ height: "100%", width: `${remainingPct}%`, background: tone, borderRadius: 2 }} />
               </div>
             )}
             {!report.noLimits && (
