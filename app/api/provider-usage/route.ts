@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getProviderUsage, redeemProviderUsageReset } from "@/lib/provider-usage";
+import { getProviderUsage, invalidateProviderUsageCache, redeemProviderUsageReset } from "@/lib/provider-usage";
 
 export const dynamic = "force-dynamic";
 
@@ -61,5 +61,7 @@ export async function POST(request: Request) {
       { error: "Saved reset could not be applied", code: "reset_failed" },
       { status: 502 },
     );
+  } finally {
+    invalidateProviderUsageCache();
   }
 }
