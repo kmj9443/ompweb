@@ -284,7 +284,14 @@ export function ProviderUsageBar() {
         const feedbackAccount = `${report.provider}:${account}`;
 
         return (
-          <div\n            key={key}\n            style={{\n              borderBottom: index < reports.length - 1\n                ? "1px solid color-mix(in srgb, var(--border) 76%, transparent)"\n                : undefined,\n            }}\n          >
+          <div
+            key={key}
+            style={{
+              borderBottom: index < reports.length - 1
+                ? "1px solid color-mix(in srgb, var(--border) 76%, transparent)"
+                : undefined,
+            }}
+          >
             <div
               title={account}
               style={{
@@ -327,7 +334,7 @@ export function ProviderUsageBar() {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    ✦ {t("providerUsage.resetCredits", { count: resetCount })}
+                    {t("providerUsage.resetCredits", { count: resetCount })}
                   </span>
                   {expiry && (
                     <span style={{ fontSize: 9, color: "var(--text-dim)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
