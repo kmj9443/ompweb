@@ -52,14 +52,14 @@ function DetailMeter({ short, window, locale, t }: {
         width: "100%",
       }}
     >
-      <span style={{ fontSize: 13.5, fontWeight: 700, color: "var(--text-dim)", letterSpacing: "0.03em" }}>{short}</span>
+      <span style={{ fontSize: 14, fontWeight: 700, color: "var(--text-dim)", letterSpacing: "0.03em" }}>{short}</span>
       <span style={{ display: "block", width: "100%", height: 5, minHeight: 5, maxHeight: 5, lineHeight: 0, borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
         <span style={{ display: "block", width: `${remainingPct}%`, height: 5, minHeight: 5, maxHeight: 5, borderRadius: 2, background: tone }} />
       </span>
       <span style={{ fontSize: 15, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", textAlign: "right", whiteSpace: "nowrap" }}>
         {remainingPct}%
       </span>
-      <span style={{ fontSize: 13.5, color: "var(--text-dim)", whiteSpace: "nowrap", textAlign: "right" }}>
+      <span style={{ fontSize: 14, color: "var(--text-dim)", whiteSpace: "nowrap", textAlign: "right" }}>
         {reset ? t("providerUsage.resets", { value: reset }) : ""}
       </span>
     </span>
@@ -118,7 +118,7 @@ export function ProviderUsageBar() {
         <span aria-hidden="true" style={{ display: "flex", color: "var(--accent)", flexShrink: 0 }}>
           <Gauge size={17} strokeWidth={2} aria-hidden="true" />
         </span>
-        <span style={{ fontSize: 16.5, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {t("appShell.sectionProviderUsage")}
         </span>
         <span style={{ marginLeft: "auto", fontSize: 15, fontFamily: "var(--font-ui)", color: worst ? usageTone(worst.usedPercent) : "var(--text-dim)", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
@@ -152,7 +152,7 @@ export function ProviderUsageBar() {
               <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 15, color: "var(--text)", background: "var(--bg)", border: "1px solid var(--border)", padding: "1px 7px", borderRadius: 5, whiteSpace: "nowrap", flexShrink: 0, lineHeight: 1.7 }}>
                 {report.provider}
               </span>
-              <span style={{ fontSize: 16.5, color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, minWidth: 0 }}>
+              <span style={{ fontSize: 17, color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, minWidth: 0 }}>
                 {account}
               </span>
               {report.noLimits && (
