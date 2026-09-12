@@ -1,6 +1,5 @@
 import { randomUUID } from "crypto";
 import { homedir } from "os";
-import { RpcProcess } from "../../lib/omp/rpc-process";
 import { isRecord } from "../../lib/type-guards";
 
 const RESET_TARGET_TTL_MS = 6 * 60_000;
@@ -305,6 +304,7 @@ function resetOutcomeFromOutput(output: string): ProviderUsageResetResultCode {
 }
 
 async function runResetCommand(selector: string): Promise<string> {
+  const { RpcProcess } = await import("../../lib/omp/rpc-process");
   const output: string[] = [];
   const proc = new RpcProcess({
     cwd: homedir(),
