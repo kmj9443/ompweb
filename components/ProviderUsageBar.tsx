@@ -45,10 +45,10 @@ function DetailMeter({ short, window, locale, t }: {
   return (
     <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
       <span style={{ fontSize: 9, fontWeight: 700, color: "var(--text-dim)", letterSpacing: "0.04em", width: 36, flexShrink: 0 }}>{short}</span>
-      <span style={{ flex: 1, minWidth: 0, height: 3, borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
+      <span style={{ width: 72, flex: "0 0 72px", height: 3, borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
         <span style={{ display: "block", height: "100%", width: `${remainingPct}%`, background: tone, borderRadius: 2 }} />
       </span>
-      <span style={{ fontSize: 10, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
+      <span style={{ width: 32, fontSize: 10, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", flexShrink: 0, textAlign: "right" }}>
         {remainingPct}%
       </span>
       {reset && (
