@@ -46,20 +46,20 @@ function DetailMeter({ short, window, locale, t }: {
     <span
       style={{
         display: "grid",
-        gridTemplateColumns: "28px minmax(48px, 1fr) 32px 88px",
+        gridTemplateColumns: "34px minmax(56px, 1fr) 36px 104px",
         alignItems: "center",
         columnGap: 6,
         width: "100%",
       }}
     >
-      <span style={{ fontSize: 9, fontWeight: 700, color: "var(--text-dim)", letterSpacing: "0.04em" }}>{short}</span>
+      <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-dim)", letterSpacing: "0.04em" }}>{short}</span>
       <span style={{ display: "block", width: "100%", height: 4, minHeight: 4, maxHeight: 4, lineHeight: 0, borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
         <span style={{ display: "block", width: `${remainingPct}%`, height: 4, minHeight: 4, maxHeight: 4, borderRadius: 2, background: tone }} />
       </span>
-      <span style={{ fontSize: 10, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", textAlign: "right", whiteSpace: "nowrap" }}>
+      <span style={{ fontSize: 11, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", textAlign: "right", whiteSpace: "nowrap" }}>
         {remainingPct}%
       </span>
-      <span style={{ fontSize: 9, color: "var(--text-dim)", whiteSpace: "nowrap", textAlign: "right" }}>
+      <span style={{ fontSize: 10, color: "var(--text-dim)", whiteSpace: "nowrap", textAlign: "right" }}>
         {reset ? t("providerUsage.resets", { value: reset }) : ""}
       </span>
     </span>
@@ -92,8 +92,8 @@ export function ProviderUsageBar() {
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: 2,
-        padding: "8px 8px 6px",
+        gap: 3,
+        padding: "9px 8px 7px",
         borderTop: "1px solid var(--border)",
         background: "var(--bg-panel)",
         flexShrink: 0,
@@ -118,10 +118,10 @@ export function ProviderUsageBar() {
         <span aria-hidden="true" style={{ display: "flex", color: "var(--accent)", flexShrink: 0 }}>
           <Gauge size={13} strokeWidth={2} aria-hidden="true" />
         </span>
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {t("appShell.sectionProviderUsage")}
         </span>
-        <span style={{ marginLeft: "auto", fontSize: 10, fontFamily: "var(--font-ui)", color: worst ? usageTone(worst.usedPercent) : "var(--text-dim)", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
+        <span style={{ marginLeft: "auto", fontSize: 11, fontFamily: "var(--font-ui)", color: worst ? usageTone(worst.usedPercent) : "var(--text-dim)", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
           {loading && reports.length === 0
             ? t("appShell.providerUsageLoading")
             : error
@@ -144,23 +144,23 @@ export function ProviderUsageBar() {
                 gap: 6,
                 width: "100%",
                 boxSizing: "border-box",
-                padding: "5px 6px 4px",
+                padding: "6px 6px 5px",
                 textAlign: "left",
                 minWidth: 0,
               }}
             >
-              <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 10, color: "var(--text)", background: "var(--bg)", border: "1px solid var(--border)", padding: "0 5px", borderRadius: 4, whiteSpace: "nowrap", flexShrink: 0, lineHeight: 1.7 }}>
+              <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 11, color: "var(--text)", background: "var(--bg)", border: "1px solid var(--border)", padding: "0 5px", borderRadius: 4, whiteSpace: "nowrap", flexShrink: 0, lineHeight: 1.7 }}>
                 {report.provider}
               </span>
-              <span style={{ fontSize: 11, color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, minWidth: 0 }}>
+              <span style={{ fontSize: 12, color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, minWidth: 0 }}>
                 {account}
               </span>
               {report.noLimits && (
-                <span style={{ fontSize: 10, color: "var(--text-dim)", flexShrink: 0 }}>∞</span>
+                <span style={{ fontSize: 11, color: "var(--text-dim)", flexShrink: 0 }}>∞</span>
               )}
             </div>
             {!report.noLimits && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "6px 8px 7px 6px", fontFamily: "var(--font-ui)" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, padding: "7px 8px 8px 6px", fontFamily: "var(--font-ui)" }}>
                 {WINDOWS.map((def) => {
                   const window = def.pick(report);
                   return window ? <DetailMeter key={def.short} short={t(def.labelKey)} window={window} locale={locale} t={t} /> : null;
