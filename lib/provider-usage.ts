@@ -436,23 +436,28 @@ function getUsageOutput(): Promise<string> {
   if (usageCache && usageCache.expiresAt > Date.now()) return Promise.resolve(usageCache.output);
   if (usageInFlight) return usageInFlight;
   const generation = usageGeneration;
-  const inFlight = fetchProviderUsage(generation)
-    .then((output) => {
-      if (generation === usageGeneration) {
-        usageCache = { output, expiresAt: Date.now() + USAGE_CACHE_TTL_MS };
-      }
-      return output;
-    })
-    .finally(() => {
-      if (usageInFlight === inFlight) usageInFlight = undefined;
-    });
-  usageInFlight = inFlight;
-  return inFlight;
+  const request = fetchProviderUsage(generation).then((output) => {
+    if (generation === usageGeneration) {
+      usageCache = { output, expiresAt: Date.now() + USAGE_CACHE_TTL_MS };
+    }
+    return output;
+  });
+  usageInFlight = request;
+  void request.then(
+    () => {
+      if (usageInFlight === request) usageInFlight = undefined;
+    },
+    () => {
+      if (usageInFlight === request) usageInFlight = undefined;
+    },
+  );
+  return request;
 }
 
 export function invalidateProviderUsageCache(): void {
   usageGeneration += 1;
   usageCache = undefined;
+  usageInFlight = undefined;
   resetTargets().clear();
 }
 
@@ -500,18 +505,19 @@ export async function redeemProviderUsageReset(targetId: string): Promise<Provid
     return { ok: false, code: "no_account" };
   }
 
+  const selector = target.accountId ?? target.email;
+  if (!selector) return { ok: false, code: "no_account" };
+  const lockKey = `${target.provider}\0${selector}`;
   const inFlight = resetInFlight();
-  if (inFlight.has(targetId)) return { ok: false, code: "in_progress" };
-  inFlight.add(targetId);
+  if (inFlight.has(lockKey)) return { ok: false, code: "in_progress" };
+  inFlight.add(lockKey);
 
   try {
-    const selector = target.accountId ?? target.email;
-    if (!selector) return { ok: false, code: "no_account" };
     const commandOutput = await runResetCommand(selector);
     const code = resetOutcomeFromOutput(commandOutput);
     return { ok: code === "reset", code };
   } finally {
-    inFlight.delete(targetId);
+    inFlight.delete(lockKey);
     invalidateProviderUsageCache();
   }
 }
