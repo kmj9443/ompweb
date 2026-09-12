@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Gauge } from "lucide-react";
+import { ChevronRight, Gauge } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { formatUsageReset, usageTone, useProviderUsage } from "./AppShell-provider-usage";
 import type { ProviderUsageReport, ProviderUsageWindow } from "@/lib/provider-usage-types";
@@ -17,6 +17,8 @@ const WINDOWS: WindowDef[] = [
   { short: "7D", labelKey: "providerUsage.window7d", pick: (r) => r.sevenDay },
   { short: "30D", labelKey: "providerUsage.window30d", pick: (r) => r.monthly },
 ];
+
+const COLLAPSED_STORAGE_KEY = "omp-web:provider-usage-collapsed";
 
 function worstWindow(report: ProviderUsageReport): { short: string; labelKey: string; window: ProviderUsageWindow } | null {
   let best: { short: string; labelKey: string; window: ProviderUsageWindow } | null = null;
@@ -111,14 +113,24 @@ function resetFeedbackKey(code: string | undefined): string {
 }
 
 // Provider rate-limit block pinned above Settings in the sidebar.
-// Keep the section and every account detail permanently expanded for at-a-glance monitoring.
+// The whole section can collapse, while every account detail stays permanently
+// expanded whenever the section itself is open.
 export function ProviderUsageBar() {
   const { t, locale } = useI18n();
   const { snapshot, loading, error, refresh } = useProviderUsage("", 5 * 60_000);
   const reports = snapshot?.reports ?? [];
+  const [collapsed, setCollapsed] = useState(true);
   const [armedTarget, setArmedTarget] = useState<string | null>(null);
   const [pendingTarget, setPendingTarget] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ account: string; key: string; ok: boolean } | null>(null);
+
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem(COLLAPSED_STORAGE_KEY) === "false") setCollapsed(false);
+    } catch {
+      // Storage unavailable: keep the collapsed default.
+    }
+  }, []);
 
   useEffect(() => {
     if (!armedTarget) return;
@@ -194,7 +206,18 @@ export function ProviderUsageBar() {
         overflowY: "auto",
       }}
     >
-      <div
+      <button
+        type="button"
+        onClick={() => setCollapsed((value) => {
+          const next = !value;
+          try {
+            window.localStorage.setItem(COLLAPSED_STORAGE_KEY, String(next));
+          } catch {
+            // The preference still applies for this page load.
+          }
+          return next;
+        })}
+        aria-expanded={!collapsed}
         title={t("appShell.sectionProviderUsage")}
         style={{
           display: "flex",
@@ -204,9 +227,23 @@ export function ProviderUsageBar() {
           boxSizing: "border-box",
           padding: "0 4px",
           minWidth: 0,
+          background: "none",
+          border: "none",
+          cursor: "pointer",
           textAlign: "left",
         }}
       >
+        <ChevronRight
+          size={11}
+          strokeWidth={2}
+          aria-hidden="true"
+          style={{
+            flexShrink: 0,
+            color: "var(--text-dim)",
+            transform: collapsed ? "none" : "rotate(90deg)",
+            transition: "transform var(--dur-med) var(--ease-out-warm)",
+          }}
+        />
         <span aria-hidden="true" style={{ display: "flex", color: "var(--accent)", flexShrink: 0 }}>
           <Gauge size={13} strokeWidth={2} aria-hidden="true" />
         </span>
@@ -222,8 +259,8 @@ export function ProviderUsageBar() {
                 ? t("providerUsage.remaining", { percent: worst.remainingPercent, window: worst.window })
                 : t("appShell.providerUsageNoData")}
         </span>
-      </div>
-      {reports.map((report, index) => {
+      </button>
+      {!collapsed && reports.map((report, index) => {
         const account = report.accountLabel ?? t("appShell.account", { number: report.accountIndex ?? index + 1 });
         const key = `${report.provider}:${account}:${report.modelId ?? "all"}:${index}`;
         const resetGroupKey = report.resetTargetId ?? `${report.provider}:${account}:reset`;
