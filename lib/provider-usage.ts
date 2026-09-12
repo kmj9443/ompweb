@@ -4,7 +4,7 @@ import {
   getProviderUsageResetGeneration,
   invalidateProviderUsageResetTargets,
   sanitizeProviderUsageOutput,
-} from "@/custom/features/provider-reset-credits";
+} from "../custom/features/provider-reset-credits";
 import { resolveOmpBin } from "./omp/omp-cli";
 import { asNumber, isRecord } from "./type-guards";
 import type {
@@ -15,7 +15,7 @@ import type {
 } from "./provider-usage-types";
 
 export { sanitizeProviderUsageOutput };
-export { redeemProviderUsageReset } from "@/custom/features/provider-reset-credits";
+export { redeemProviderUsageReset } from "../custom/features/provider-reset-credits";
 
 const execFileAsync = promisify(execFile);
 const USAGE_TIMEOUT_MS = 30_000;
