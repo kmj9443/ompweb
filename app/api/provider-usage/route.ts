@@ -1,36 +1,49 @@
 import { NextResponse } from "next/server";
-import { getProviderUsage } from "@/lib/provider-usage";
-
-export const dynamic = "force-dynamic";
-
-const IDENTIFIER_RE = /^[A-Za-z0-9._:/-]{1,200}$/;
-
-function readIdentifier(value: string | null): string | undefined {
-  if (value === null) return undefined;
-  const trimmed = value.trim();
-  if (!trimmed) return undefined;
-  return IDENTIFIER_RE.test(trimmed) ? trimmed : undefined;
-}
+import { getProviderUsage, redeemProviderUsageReset } from "@/lib/provider-usage";
 
 export async function GET(request: Request) {
-  const searchParams = new URL(request.url).searchParams;
-  const rawProvider = searchParams.get("provider");
-  const rawModel = searchParams.get("model");
-  const provider = readIdentifier(rawProvider);
-  const modelId = readIdentifier(rawModel);
-
-  if ((rawProvider !== null && !provider) || (rawModel !== null && !modelId)) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const provider = searchParams.get("provider")?.trim() || undefined;
+    const modelId = searchParams.get("model")?.trim() || undefined;
+    if (provider && provider.length > 128) {
+      return NextResponse.json({ error: "provider is too long" }, { status: 400 });
+    }
+    if (modelId && modelId.length > 256) {
+      return NextResponse.json({ error: "model is too long" }, { status: 400 });
+    }
+    const snapshot = await getProviderUsage({ provider, modelId });
+    return NextResponse.json(snapshot);
+  } catch (error) {
     return NextResponse.json(
-      { error: "Invalid provider or model identifier", code: "invalid_usage_query" },
-      { status: 400 },
+      { error: error instanceof Error ? error.message : String(error) },
+      { status: 502 },
     );
   }
+}
 
+export async function POST(request: Request) {
   try {
-    return NextResponse.json(await getProviderUsage({ provider, modelId }));
-  } catch {
+    const body = await request.json() as { action?: unknown; targetId?: unknown };
+    if (body.action !== "redeem-reset") {
+      return NextResponse.json({ error: "unsupported action", code: "unsupported_action" }, { status: 400 });
+    }
+    if (
+      typeof body.targetId !== "string" ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.targetId)
+    ) {
+      return NextResponse.json({ error: "invalid reset target", code: "invalid_target" }, { status: 400 });
+    }
+
+    const result = await redeemProviderUsageReset(body.targetId);
+    const status = result.code === "stale_target" ? 409 : result.code === "in_progress" ? 409 : 200;
+    return NextResponse.json(result, { status });
+  } catch (error) {
     return NextResponse.json(
-      { error: "Provider usage is currently unavailable", code: "provider_usage_unavailable" },
+      {
+        error: error instanceof Error ? error.message : String(error),
+        code: "reset_failed",
+      },
       { status: 502 },
     );
   }
