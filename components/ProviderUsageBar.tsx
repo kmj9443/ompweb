@@ -45,26 +45,39 @@ function DetailMeter({ short, window, locale, t }: {
     ? formatUsageReset(rawReset, window.resetMinutes !== undefined ? "minutes" : "hours", locale)
     : null;
   return (
-    <span
+    <div
       style={{
-        display: "grid",
-        gridTemplateColumns: "28px minmax(48px, 1fr) 32px 48px",
-        alignItems: "center",
-        columnGap: 6,
+        display: "flex",
+        flexDirection: "column",
+        gap: 3,
         width: "100%",
+        minWidth: 0,
       }}
     >
-      <span style={{ fontSize: 9, fontWeight: 700, color: "var(--text-dim)", letterSpacing: "0.04em" }}>{short}</span>
+      <span
+        style={{
+          display: "grid",
+          gridTemplateColumns: "28px 34px minmax(0, 1fr)",
+          alignItems: "baseline",
+          columnGap: 4,
+          width: "100%",
+          minWidth: 0,
+        }}
+      >
+        <span style={{ fontSize: 9, fontWeight: 700, color: "var(--text-dim)", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>
+          {short}
+        </span>
+        <span style={{ fontSize: 10, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
+          {remainingPct}%
+        </span>
+        <span style={{ fontSize: 9, color: "var(--text-dim)", whiteSpace: "nowrap", justifySelf: "end" }}>
+          {reset ?? ""}
+        </span>
+      </span>
       <span style={{ display: "block", width: "100%", height: 4, minHeight: 4, maxHeight: 4, lineHeight: 0, borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
         <span style={{ display: "block", width: `${remainingPct}%`, height: 4, minHeight: 4, maxHeight: 4, borderRadius: 2, background: tone }} />
       </span>
-      <span style={{ fontSize: 10, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", textAlign: "right", whiteSpace: "nowrap" }}>
-        {remainingPct}%
-      </span>
-      <span style={{ fontSize: 9, color: "var(--text-dim)", whiteSpace: "nowrap", textAlign: "right" }}>
-        {reset ?? ""}
-      </span>
-    </span>
+    </div>
   );
 }
 
@@ -225,7 +238,7 @@ export function ProviderUsageBar() {
           gap: 7,
           width: "100%",
           boxSizing: "border-box",
-          padding: "0 4px",
+          padding: "0 4px 3px",
           minWidth: 0,
           background: "none",
           border: "none",
@@ -271,7 +284,7 @@ export function ProviderUsageBar() {
         const feedbackAccount = `${report.provider}:${account}`;
 
         return (
-          <div key={key}>
+          <div\n            key={key}\n            style={{\n              borderBottom: index < reports.length - 1\n                ? "1px solid color-mix(in srgb, var(--border) 76%, transparent)"\n                : undefined,\n            }}\n          >
             <div
               title={account}
               style={{
@@ -280,7 +293,7 @@ export function ProviderUsageBar() {
                 gap: 6,
                 width: "100%",
                 boxSizing: "border-box",
-                padding: "5px 6px 4px",
+                padding: "5px 6px 3px",
                 textAlign: "left",
                 minWidth: 0,
               }}
@@ -296,7 +309,7 @@ export function ProviderUsageBar() {
               )}
             </div>
             {!report.noLimits && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "6px 8px 7px 6px", fontFamily: "var(--font-ui)" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "4px 8px 6px 6px", fontFamily: "var(--font-ui)" }}>
                 {WINDOWS.map((def) => {
                   const window = def.pick(report);
                   return window ? <DetailMeter key={def.short} short={t(def.labelKey)} window={window} locale={locale} t={t} /> : null;
