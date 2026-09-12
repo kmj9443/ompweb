@@ -46,7 +46,7 @@ function DetailMeter({ short, window, locale, t }: {
     <span
       style={{
         display: "grid",
-        gridTemplateColumns: "36px minmax(48px, 1fr) 136px",
+        gridTemplateColumns: "36px minmax(48px, 1fr) auto",
         alignItems: "center",
         columnGap: 6,
         width: "100%",
@@ -58,17 +58,18 @@ function DetailMeter({ short, window, locale, t }: {
       </span>
       <span
         style={{
-          display: "grid",
-          gridTemplateColumns: "32px 102px",
+          display: "flex",
           alignItems: "center",
-          columnGap: 2,
+          justifyContent: "flex-end",
+          gap: 2,
           minWidth: 0,
+          whiteSpace: "nowrap",
         }}
       >
-        <span style={{ fontSize: 10, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", textAlign: "right" }}>
+        <span style={{ fontSize: 10, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums" }}>
           {remainingPct}%
         </span>
-        <span style={{ fontSize: 9, color: "var(--text-dim)", whiteSpace: "nowrap", textAlign: "right" }}>
+        <span style={{ fontSize: 9, color: "var(--text-dim)" }}>
           {reset ? t("providerUsage.resets", { value: reset }) : ""}
         </span>
       </span>
