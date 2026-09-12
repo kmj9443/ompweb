@@ -46,7 +46,7 @@ function DetailMeter({ short, window, locale, t }: {
     <span
       style={{
         display: "grid",
-        gridTemplateColumns: "36px minmax(48px, 1fr) auto",
+        gridTemplateColumns: "36px minmax(48px, 1fr) 32px 112px",
         alignItems: "center",
         columnGap: 6,
         width: "100%",
@@ -56,22 +56,11 @@ function DetailMeter({ short, window, locale, t }: {
       <span style={{ display: "block", width: "100%", height: 4, minHeight: 4, maxHeight: 4, lineHeight: 0, borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
         <span style={{ display: "block", width: `${remainingPct}%`, height: 4, minHeight: 4, maxHeight: 4, borderRadius: 2, background: tone }} />
       </span>
-      <span
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-end",
-          gap: 2,
-          minWidth: 0,
-          whiteSpace: "nowrap",
-        }}
-      >
-        <span style={{ fontSize: 10, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums" }}>
-          {remainingPct}%
-        </span>
-        <span style={{ fontSize: 9, color: "var(--text-dim)" }}>
-          {reset ? t("providerUsage.resets", { value: reset }) : ""}
-        </span>
+      <span style={{ fontSize: 10, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", textAlign: "right", whiteSpace: "nowrap" }}>
+        {remainingPct}%
+      </span>
+      <span style={{ fontSize: 9, color: "var(--text-dim)", whiteSpace: "nowrap", textAlign: "right" }}>
+        {reset ? t("providerUsage.resets", { value: reset }) : ""}
       </span>
     </span>
   );
