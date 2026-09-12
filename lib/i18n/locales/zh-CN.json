@@ -182,6 +182,7 @@
   "appShell.providerUsageNoData": "没有提供商限额报告",
   "appShell.account": "账户 {number}",
   "providerUsage.highest": "最高 {percent}% · {window}",
+  "providerUsage.remaining": "剩余 {percent}% · {window}",
   "providerUsage.resets": "{value} 后重置",
   "appShell.allModels": "所有模型",
   "appShell.providerUsageButton": "提供商用量限额",
