@@ -184,6 +184,7 @@
   "appShell.providerUsageNoData": "보고된 제공자 한도가 없습니다",
   "appShell.account": "계정 {number}",
   "providerUsage.highest": "최고 {percent}% · {window}",
+  "providerUsage.remaining": "잔여 {percent}% · {window}",
   "providerUsage.resets": "{value} 후 초기화",
   "appShell.providerUsageButton": "제공자 사용량 한도",
   "composerContext.title": "컨텍스트",
