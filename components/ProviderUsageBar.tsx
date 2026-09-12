@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Gauge } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { formatUsageReset, usageTone, useProviderUsage } from "./AppShell-provider-usage";
@@ -16,7 +17,6 @@ const WINDOWS: WindowDef[] = [
   { short: "7D", labelKey: "providerUsage.window7d", pick: (r) => r.sevenDay },
   { short: "30D", labelKey: "providerUsage.window30d", pick: (r) => r.monthly },
 ];
-
 
 function worstWindow(report: ProviderUsageReport): { short: string; labelKey: string; window: ProviderUsageWindow } | null {
   let best: { short: string; labelKey: string; window: ProviderUsageWindow } | null = null;
@@ -66,12 +66,59 @@ function DetailMeter({ short, window, locale, t }: {
   );
 }
 
+function soonestResetExpiry(report: ProviderUsageReport): string | null {
+  const credits = report.resetCredits?.credits ?? [];
+  const candidates = credits
+    .filter((credit) => (credit.status ?? "available") === "available" && credit.expiresAt)
+    .map((credit) => ({ value: credit.expiresAt!, time: Date.parse(credit.expiresAt!) }))
+    .filter((credit) => Number.isFinite(credit.time))
+    .sort((a, b) => a.time - b.time);
+  return candidates[0]?.value ?? null;
+}
+
+function formatResetExpiry(value: string, locale: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  const now = new Date();
+  const includeYear = date.getFullYear() !== now.getFullYear();
+  try {
+    return new Intl.DateTimeFormat(locale, {
+      ...(includeYear ? { year: "numeric" as const } : {}),
+      month: "short",
+      day: "numeric",
+    }).format(date);
+  } catch {
+    return date.toISOString().slice(0, 10);
+  }
+}
+
+function resetFeedbackKey(code: string | undefined): string {
+  switch (code) {
+    case "reset":
+      return "providerUsage.resetApplied";
+    case "nothing_to_reset":
+      return "providerUsage.resetNothingToReset";
+    case "no_credit":
+    case "already_redeemed":
+      return "providerUsage.resetNoCredit";
+    case "stale_target":
+      return "providerUsage.resetTargetExpired";
+    case "in_progress":
+      return "providerUsage.resetInProgress";
+    default:
+      return "providerUsage.resetFailed";
+  }
+}
+
 // Provider rate-limit block pinned above Settings in the sidebar.
 // Keep the section and every account detail permanently expanded for at-a-glance monitoring.
 export function ProviderUsageBar() {
   const { t, locale } = useI18n();
-  const { snapshot, loading, error } = useProviderUsage("", 5 * 60_000);
+  const { snapshot, loading, error, refresh } = useProviderUsage("", 5 * 60_000);
   const reports = snapshot?.reports ?? [];
+  const [armedTarget, setArmedTarget] = useState<string | null>(null);
+  const [pendingTarget, setPendingTarget] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{ account: string; key: string; ok: boolean } | null>(null);
 
   let worst: { usedPercent: number; remainingPercent: number; window: string } | null = null;
   for (const report of reports) {
@@ -85,6 +132,43 @@ export function ProviderUsageBar() {
       };
     }
   }
+
+  const redeemReset = async (report: ProviderUsageReport, account: string) => {
+    const targetId = report.resetTargetId;
+    if (!targetId || (report.resetCredits?.availableCount ?? 0) <= 0 || pendingTarget) return;
+    if (armedTarget !== targetId) {
+      setArmedTarget(targetId);
+      setFeedback(null);
+      return;
+    }
+
+    setArmedTarget(null);
+    setPendingTarget(targetId);
+    try {
+      const response = await fetch("/api/provider-usage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "redeem-reset", targetId }),
+      });
+      const result = await response.json().catch(() => ({})) as { ok?: boolean; code?: string };
+      setFeedback({
+        account: `${report.provider}:${account}`,
+        key: resetFeedbackKey(result.code),
+        ok: result.code === "reset",
+      });
+    } catch {
+      setFeedback({
+        account: `${report.provider}:${account}`,
+        key: "providerUsage.resetFailed",
+        ok: false,
+      });
+    } finally {
+      setPendingTarget(null);
+      refresh();
+    }
+  };
+
+  const shownResetTargets = new Set<string>();
 
   return (
     <section
@@ -134,6 +218,13 @@ export function ProviderUsageBar() {
       {reports.map((report, index) => {
         const account = report.accountLabel ?? t("appShell.account", { number: report.accountIndex ?? index + 1 });
         const key = `${report.provider}:${account}:${report.modelId ?? "all"}:${index}`;
+        const resetGroupKey = report.resetTargetId ?? `${report.provider}:${account}:reset`;
+        const showResetCredits = Boolean(report.resetCredits) && !shownResetTargets.has(resetGroupKey);
+        if (showResetCredits) shownResetTargets.add(resetGroupKey);
+        const resetCount = report.resetCredits?.availableCount ?? 0;
+        const expiry = showResetCredits ? soonestResetExpiry(report) : null;
+        const feedbackAccount = `${report.provider}:${account}`;
+
         return (
           <div key={key}>
             <div
@@ -165,6 +256,60 @@ export function ProviderUsageBar() {
                   const window = def.pick(report);
                   return window ? <DetailMeter key={def.short} short={t(def.labelKey)} window={window} locale={locale} t={t} /> : null;
                 })}
+              </div>
+            )}
+            {showResetCredits && (
+              <div style={{ padding: "0 8px 7px 6px", fontFamily: "var(--font-ui)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                      color: resetCount > 0 ? "var(--accent)" : "var(--text-dim)",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    ✦ {t("providerUsage.resetCredits", { count: resetCount })}
+                  </span>
+                  {expiry && (
+                    <span style={{ fontSize: 9, color: "var(--text-dim)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {t("providerUsage.resetCreditExpires", { date: formatResetExpiry(expiry, locale) })}
+                    </span>
+                  )}
+                  {resetCount > 0 && report.resetTargetId && (
+                    <button
+                      type="button"
+                      disabled={pendingTarget !== null}
+                      onClick={() => void redeemReset(report, account)}
+                      title={armedTarget === report.resetTargetId ? t("providerUsage.resetConfirmHint") : t("providerUsage.resetUseHint")}
+                      style={{
+                        marginLeft: "auto",
+                        flexShrink: 0,
+                        border: `1px solid ${armedTarget === report.resetTargetId ? "var(--status-warning)" : "var(--border)"}`,
+                        borderRadius: 5,
+                        padding: "2px 6px",
+                        background: "var(--bg)",
+                        color: armedTarget === report.resetTargetId ? "var(--status-warning)" : "var(--text-muted)",
+                        font: "inherit",
+                        fontSize: 9,
+                        fontWeight: 700,
+                        cursor: pendingTarget ? "default" : "pointer",
+                        opacity: pendingTarget && pendingTarget !== report.resetTargetId ? 0.45 : 1,
+                      }}
+                    >
+                      {pendingTarget === report.resetTargetId
+                        ? t("providerUsage.resetUsing")
+                        : armedTarget === report.resetTargetId
+                          ? t("providerUsage.resetConfirm")
+                          : t("providerUsage.resetUse")}
+                    </button>
+                  )}
+                </div>
+                {feedback?.account === feedbackAccount && (
+                  <div style={{ marginTop: 4, fontSize: 9, lineHeight: 1.35, color: feedback.ok ? "var(--accent)" : "var(--text-dim)" }}>
+                    {t(feedback.key)}
+                  </div>
+                )}
               </div>
             )}
           </div>
