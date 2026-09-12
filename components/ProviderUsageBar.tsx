@@ -128,10 +128,6 @@ export function ProviderUsageBar() {
       {reports.map((report, index) => {
         const account = report.accountLabel ?? t("appShell.account", { number: report.accountIndex ?? index + 1 });
         const key = `${report.provider}:${account}:${report.modelId ?? "all"}:${index}`;
-        const best = worstWindow(report);
-        const usedPct = best ? Math.round(best.window.percent) : 0;
-        const remainingPct = Math.max(0, Math.min(100, 100 - usedPct));
-        const tone = usageTone(usedPct);
         return (
           <div key={key}>
             <div
@@ -153,19 +149,10 @@ export function ProviderUsageBar() {
               <span style={{ fontSize: 11, color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, minWidth: 0 }}>
                 {account}
               </span>
-              {report.noLimits ? (
+              {report.noLimits && (
                 <span style={{ fontSize: 10, color: "var(--text-dim)", flexShrink: 0 }}>∞</span>
-              ) : (
-                <span style={{ fontFamily: "var(--font-ui)", fontSize: 11, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
-                  {remainingPct}%
-                </span>
               )}
             </div>
-            {!report.noLimits && (
-              <div style={{ height: 3, margin: "0 6px", borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${remainingPct}%`, background: tone, borderRadius: 2 }} />
-              </div>
-            )}
             {!report.noLimits && (
               <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "6px 8px 7px 6px", fontFamily: "var(--font-ui)" }}>
                 {WINDOWS.map((def) => {
