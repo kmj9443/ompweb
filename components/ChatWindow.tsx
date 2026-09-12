@@ -1114,7 +1114,7 @@ export function ChatWindow({ session, newSessionCwd, newSessionWorkspace, toolCa
       {isEmptyNew ? (
         <div className="relative flex flex-1 flex-col overflow-hidden">
           <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-4 py-8" style={{ minHeight: 0 }}>
-          <div className="w-full" style={{ maxWidth: CHAT_COLUMN_MAX_WIDTH }}>
+          <div className="w-full" style={{ maxWidth: CHAT_COLUMN_MAX_WIDTH, transform: "translateY(clamp(40px, 7vh, 72px))" }}>
             <div
                className="mb-3 empty-chat-brand"
               style={{
