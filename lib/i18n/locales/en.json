@@ -1411,5 +1411,18 @@
   "usageConfig.error": "Could not load usage data",
   "providerUsage.window5h": "5H",
   "providerUsage.window7d": "7D",
-  "providerUsage.window30d": "30D"
+  "providerUsage.window30d": "30D",
+  "providerUsage.resetCredits": "{count} reset ticket(s)",
+  "providerUsage.resetCreditExpires": "expires {date}",
+  "providerUsage.resetUse": "Use",
+  "providerUsage.resetConfirm": "Click again",
+  "providerUsage.resetUsing": "Using…",
+  "providerUsage.resetUseHint": "Spend one saved reset ticket for this account",
+  "providerUsage.resetConfirmHint": "Click again to spend one saved reset ticket",
+  "providerUsage.resetApplied": "Reset applied. The account limit window was refreshed.",
+  "providerUsage.resetNothingToReset": "There is nothing to reset right now. No ticket was spent.",
+  "providerUsage.resetNoCredit": "No usable reset ticket remains for this account.",
+  "providerUsage.resetTargetExpired": "Account information changed. Usage data was refreshed; try again.",
+  "providerUsage.resetInProgress": "A reset is already being applied for this account.",
+  "providerUsage.resetFailed": "Could not confirm the reset result. Usage data was refreshed."
 }
