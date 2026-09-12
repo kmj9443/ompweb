@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Gauge } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { formatUsageReset, usageTone, useProviderUsage } from "./AppShell-provider-usage";
@@ -119,6 +119,14 @@ export function ProviderUsageBar() {
   const [armedTarget, setArmedTarget] = useState<string | null>(null);
   const [pendingTarget, setPendingTarget] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ account: string; key: string; ok: boolean } | null>(null);
+
+  useEffect(() => {
+    if (!armedTarget) return;
+    const timer = window.setTimeout(() => {
+      setArmedTarget((current) => current === armedTarget ? null : current);
+    }, 5_000);
+    return () => window.clearTimeout(timer);
+  }, [armedTarget]);
 
   let worst: { usedPercent: number; remainingPercent: number; window: string } | null = null;
   for (const report of reports) {
