@@ -59,7 +59,7 @@ function DetailMeter({ short, window, locale, t }: {
       <span style={{ fontSize: 10, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", textAlign: "right", whiteSpace: "nowrap" }}>
         {remainingPct}%
       </span>
-      <span style={{ fontSize: 9, color: "var(--text-dim)", whiteSpace: "nowrap", textAlign: "right" }}>
+      <span style={{ fontSize: 9, color: "var(--text-dim)", whiteSpace: "nowrap", textAlign: "left" }}>
         {reset ? t("providerUsage.resets", { value: reset }) : ""}
       </span>
     </span>
