@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Gauge } from "lucide-react";
+import { Gauge } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { formatUsageReset, usageTone, useProviderUsage } from "./AppShell-provider-usage";
 import type { ProviderUsageReport, ProviderUsageWindow } from "@/lib/provider-usage-types";
@@ -103,16 +103,6 @@ export function ProviderUsageBar() {
           textAlign: "left",
         }}
       >
-        <ChevronRight
-          size={11}
-          strokeWidth={2}
-          aria-hidden="true"
-          style={{
-            flexShrink: 0,
-            color: "var(--text-dim)",
-            transform: "rotate(90deg)",
-          }}
-        />
         <span aria-hidden="true" style={{ display: "flex", color: "var(--accent)", flexShrink: 0 }}>
           <Gauge size={13} strokeWidth={2} aria-hidden="true" />
         </span>
@@ -136,7 +126,7 @@ export function ProviderUsageBar() {
         const pct = best ? Math.round(best.window.percent) : 0;
         const tone = usageTone(pct);
         return (
-          <div key={key} style={{ borderRadius: "var(--radius-control)", background: "var(--bg-subtle)" }}>
+          <div key={key}>
             <div
               title={account}
               style={{
@@ -150,18 +140,6 @@ export function ProviderUsageBar() {
                 minWidth: 0,
               }}
             >
-              {!report.noLimits && (
-                <ChevronRight
-                  size={11}
-                  strokeWidth={2}
-                  aria-hidden="true"
-                  style={{
-                    flexShrink: 0,
-                    color: "var(--text-dim)",
-                    transform: "rotate(90deg)",
-                  }}
-                />
-              )}
               <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 10, color: "var(--text)", background: "var(--bg)", border: "1px solid var(--border)", padding: "0 5px", borderRadius: 4, whiteSpace: "nowrap", flexShrink: 0, lineHeight: 1.7 }}>
                 {report.provider}
               </span>
@@ -177,12 +155,12 @@ export function ProviderUsageBar() {
               )}
             </div>
             {!report.noLimits && (
-              <div style={{ height: 3, margin: "0 6px 0 23px", borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
+              <div style={{ height: 3, margin: "0 6px", borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${Math.min(100, Math.max(0, pct))}%`, background: tone, borderRadius: 2 }} />
               </div>
             )}
             {!report.noLimits && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "6px 8px 7px 23px", fontFamily: "var(--font-ui)" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: "6px 8px 7px 6px", fontFamily: "var(--font-ui)" }}>
                 {WINDOWS.map((def) => {
                   const window = def.pick(report);
                   return window ? <DetailMeter key={def.short} short={t(def.labelKey)} window={window} locale={locale} t={t} /> : null;
