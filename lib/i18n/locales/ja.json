@@ -182,6 +182,7 @@
   "appShell.providerUsageNoData": "プロバイダー制限の報告はありません",
   "appShell.account": "アカウント {number}",
   "providerUsage.highest": "最大 {percent}% · {window}",
+  "providerUsage.remaining": "残り {percent}% · {window}",
   "providerUsage.resets": "{value} でリセット",
   "appShell.allModels": "すべてのモデル",
   "appShell.providerUsageButton": "プロバイダー使用量の制限",
