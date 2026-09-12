@@ -53,13 +53,13 @@ function DetailMeter({ short, window, locale, t }: {
       }}
     >
       <span style={{ fontSize: 9, fontWeight: 700, color: "var(--text-dim)", letterSpacing: "0.04em" }}>{short}</span>
-      <span style={{ width: "100%", height: 3, borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
-        <span style={{ display: "block", height: "100%", width: `${remainingPct}%`, background: tone, borderRadius: 2 }} />
+      <span style={{ display: "block", width: "100%", height: 3, minHeight: 3, maxHeight: 3, lineHeight: 0, borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
+        <span style={{ display: "block", width: `${remainingPct}%`, height: 3, minHeight: 3, maxHeight: 3, borderRadius: 2, background: tone }} />
       </span>
       <span style={{ fontSize: 10, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", textAlign: "right" }}>
         {remainingPct}%
       </span>
-      <span style={{ fontSize: 9, color: "var(--text-dim)", whiteSpace: "nowrap", textAlign: "left" }}>
+      <span style={{ fontSize: 9, color: "var(--text-dim)", whiteSpace: "nowrap", textAlign: "right" }}>
         {reset ? t("providerUsage.resets", { value: reset }) : ""}
       </span>
     </span>
