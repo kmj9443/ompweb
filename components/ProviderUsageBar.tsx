@@ -46,7 +46,7 @@ function DetailMeter({ short, window, locale, t }: {
     <span
       style={{
         display: "grid",
-        gridTemplateColumns: "36px minmax(48px, 1fr) 32px 88px",
+        gridTemplateColumns: "28px minmax(48px, 1fr) 32px 88px",
         alignItems: "center",
         columnGap: 6,
         width: "100%",
