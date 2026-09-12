@@ -46,21 +46,31 @@ function DetailMeter({ short, window, locale, t }: {
     <span
       style={{
         display: "grid",
-        gridTemplateColumns: "36px minmax(48px, 1fr) 32px 102px",
+        gridTemplateColumns: "36px minmax(48px, 1fr) 136px",
         alignItems: "center",
         columnGap: 6,
         width: "100%",
       }}
     >
       <span style={{ fontSize: 9, fontWeight: 700, color: "var(--text-dim)", letterSpacing: "0.04em" }}>{short}</span>
-      <span style={{ display: "block", width: "100%", height: 3, minHeight: 3, maxHeight: 3, lineHeight: 0, borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
-        <span style={{ display: "block", width: `${remainingPct}%`, height: 3, minHeight: 3, maxHeight: 3, borderRadius: 2, background: tone }} />
+      <span style={{ display: "block", width: "100%", height: 4, minHeight: 4, maxHeight: 4, lineHeight: 0, borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
+        <span style={{ display: "block", width: `${remainingPct}%`, height: 4, minHeight: 4, maxHeight: 4, borderRadius: 2, background: tone }} />
       </span>
-      <span style={{ fontSize: 10, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", textAlign: "right" }}>
-        {remainingPct}%
-      </span>
-      <span style={{ fontSize: 9, color: "var(--text-dim)", whiteSpace: "nowrap", textAlign: "right" }}>
-        {reset ? t("providerUsage.resets", { value: reset }) : ""}
+      <span
+        style={{
+          display: "grid",
+          gridTemplateColumns: "32px 102px",
+          alignItems: "center",
+          columnGap: 2,
+          minWidth: 0,
+        }}
+      >
+        <span style={{ fontSize: 10, fontWeight: 700, color: tone, fontVariantNumeric: "tabular-nums", textAlign: "right" }}>
+          {remainingPct}%
+        </span>
+        <span style={{ fontSize: 9, color: "var(--text-dim)", whiteSpace: "nowrap", textAlign: "right" }}>
+          {reset ? t("providerUsage.resets", { value: reset }) : ""}
+        </span>
       </span>
     </span>
   );
