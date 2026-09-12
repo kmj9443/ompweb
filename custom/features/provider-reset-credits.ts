@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { homedir } from "os";
-import { RpcProcess } from "@/lib/omp/rpc-process";
-import { isRecord } from "@/lib/type-guards";
+import { RpcProcess } from "../../lib/omp/rpc-process";
+import { isRecord } from "../../lib/type-guards";
 
 const RESET_TARGET_TTL_MS = 6 * 60_000;
 const RESET_COMMAND_TIMEOUT_MS = 60_000;
