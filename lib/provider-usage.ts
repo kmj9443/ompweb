@@ -20,7 +20,7 @@ export { redeemProviderUsageReset } from "../custom/features/provider-reset-cred
 const execFileAsync = promisify(execFile);
 const USAGE_TIMEOUT_MS = 30_000;
 const USAGE_MAX_BUFFER = 4 * 1024 * 1024;
-const USAGE_CACHE_TTL_MS = 5 * 60_000;
+const USAGE_CACHE_TTL_MS = 60_000;
 
 type UsageQuery = { provider?: string; modelId?: string };
 
