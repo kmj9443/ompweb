@@ -130,7 +130,7 @@ function resetFeedbackKey(code: string | undefined): string {
 // expanded whenever the section itself is open.
 export function ProviderUsageBar() {
   const { t, locale } = useI18n();
-  const { snapshot, loading, error, refresh } = useProviderUsage("", 5 * 60_000);
+  const { snapshot, loading, error, refresh } = useProviderUsage("", 60_000);
   const reports = snapshot?.reports ?? [];
   const [collapsed, setCollapsed] = useState(true);
   const [armedTarget, setArmedTarget] = useState<string | null>(null);
